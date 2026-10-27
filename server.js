@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express'), mongoose = require('mongoose'), bcrypt = require('bcryptjs'),
   jwt = require('jsonwebtoken'), path = require('path');
-const { JWT_SECRET, PORT = 3000, HOD_EMAIL, HOD_PASSWORD } = process.env;
+const { JWT_SECRET, PORT = 3000, HOD_PASSWORD } = process.env;
+const HOD_EMAIL = String(process.env.HOD_EMAIL || '').trim().toLowerCase();
 const MONGO_URI = process.env.MONGO_URI || (process.env.VERCEL ? '' : 'mongodb://127.0.0.1:27017/mentordesk');
 
 const { ObjectId } = mongoose.Schema.Types;
@@ -31,8 +32,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 let conn;
 function connect() {
   if (!conn) conn = mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 8000 }).then(async () => {
-    if (HOD_EMAIL && HOD_PASSWORD && !(await User.exists({ role: 'hod' })))
-      await User.create({ name: 'HOD', email: HOD_EMAIL, hash: await bcrypt.hash(HOD_PASSWORD, 10), role: 'hod' });
+    if (HOD_EMAIL && HOD_PASSWORD) {
+      let hod = await User.findOne({ role: 'hod' });
+      if (!hod) hod = new User({ name: 'HOD', role: 'hod' });
+      hod.email = HOD_EMAIL;
+      hod.hash = await bcrypt.hash(HOD_PASSWORD, 10);
+      await hod.save();
+    }
   }).catch(e => { conn = null; throw e; });
   return conn;
 }

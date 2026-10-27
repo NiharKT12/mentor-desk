@@ -1,7 +1,7 @@
 # Mentor Desk
 
 1. Install Node 18+ and MongoDB (or use a MongoDB Atlas URI).
-2. `cp .env.example .env` and set `JWT_SECRET`, `HOD_EMAIL`, `HOD_PASSWORD` (and `MONGO_URI` if not local).
+2. Copy `.env.example` to `.env` and set `JWT_SECRET`, `HOD_EMAIL`, `HOD_PASSWORD` (and `MONGO_URI` if not local). The HOD account is created or synchronized from these values when the server connects to MongoDB.
 3. `npm install`
 4. `npm start`, then open http://localhost:3000
 
@@ -12,6 +12,7 @@ Accounts
 - Mentees can use the profile navigation to update personal details and academic details independently.
 - The student workspace includes an overview, personal details, and academic details section, with mentor notes visible from each section.
 - The application now uses a role-aware dashboard: mentees manage their profile and progress, mentors review mentees and share notes or recommendations, and HODs manage mentor accounts and assignments.
+- Default local HOD credentials from `.env.example`: `hod@college.edu` / `12345678`. Change `HOD_PASSWORD` in `.env` and in the production environment before using the application.
 
 Before going live: serve over HTTPS, use a strong JWT_SECRET, and add rate limiting on /api/auth.
 
