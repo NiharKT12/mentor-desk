@@ -11,6 +11,7 @@ Accounts
 - Mentee: signs up on the sign-in page.
 - Mentees can use the profile navigation to update personal details and academic details independently.
 - The student workspace includes an overview, personal details, and academic details section, with mentor notes visible from each section.
+- The application now uses a role-aware dashboard: mentees manage their profile and progress, mentors review mentees and share notes or recommendations, and HODs manage mentor accounts and assignments.
 
 Before going live: serve over HTTPS, use a strong JWT_SECRET, and add rate limiting on /api/auth.
 
