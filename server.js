@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express'), mongoose = require('mongoose'), bcrypt = require('bcryptjs'),
   jwt = require('jsonwebtoken'), path = require('path');
-const { MONGO_URI = 'mongodb://127.0.0.1:27017/mentordesk', JWT_SECRET, PORT = 3000, HOD_EMAIL, HOD_PASSWORD } = process.env;
-if (!JWT_SECRET) { console.error('Set JWT_SECRET in .env'); process.exit(1); }
+const { JWT_SECRET, PORT = 3000, HOD_EMAIL, HOD_PASSWORD } = process.env;
+const MONGO_URI = process.env.MONGO_URI || (process.env.VERCEL ? '' : 'mongodb://127.0.0.1:27017/mentordesk');
 
 const { ObjectId } = mongoose.Schema.Types;
 const User = mongoose.model('User', new mongoose.Schema({
@@ -26,6 +26,22 @@ const Note = mongoose.model('Note', new mongoose.Schema({
 const app = express();
 app.use(express.json({ limit: '100kb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Connect lazily and reuse the connection, so this also works on serverless hosts like Vercel
+let conn;
+function connect() {
+  if (!conn) conn = mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 8000 }).then(async () => {
+    if (HOD_EMAIL && HOD_PASSWORD && !(await User.exists({ role: 'hod' })))
+      await User.create({ name: 'HOD', email: HOD_EMAIL, hash: await bcrypt.hash(HOD_PASSWORD, 10), role: 'hod' });
+  }).catch(e => { conn = null; throw e; });
+  return conn;
+}
+app.use('/api', async (req, res, next) => {
+  if (!JWT_SECRET) return res.status(500).json({ error: 'Server setup incomplete: JWT_SECRET is not set.' });
+  if (!MONGO_URI) return res.status(500).json({ error: 'Server setup incomplete: MONGO_URI is not set.' });
+  try { await connect(); next(); }
+  catch (e) { console.error('MongoDB connection failed:', e.message); res.status(500).json({ error: 'Cannot reach the database. Check MONGO_URI and network access.' }); }
+});
 
 const sign = u => jwt.sign({ id: u.id }, JWT_SECRET, { expiresIn: '7d' });
 const pub = u => ({ id: u.id, name: u.name, email: u.email, role: u.role, mentor: u.mentor, profile: u.profile });
@@ -117,8 +133,5 @@ app.put('/api/mentees/:id/mentor', auth('hod'), async (req, res) => {
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found.' }));
 app.use((e, req, res, next) => { console.error(e); res.status(500).json({ error: 'Server error. Try again.' }); });
 
-mongoose.connect(MONGO_URI).then(async () => {
-  if (HOD_EMAIL && HOD_PASSWORD && !(await User.exists({ role: 'hod' })))
-    await User.create({ name: 'HOD', email: HOD_EMAIL, hash: await bcrypt.hash(HOD_PASSWORD, 10), role: 'hod' });
-  app.listen(PORT, () => console.log(`Mentor Desk running at http://localhost:${PORT}`));
-}).catch(e => { console.error('MongoDB connection failed:', e.message); process.exit(1); });
+module.exports = app;
+if (require.main === module) app.listen(PORT, () => console.log(`Mentor Desk running at http://localhost:${PORT}`));
