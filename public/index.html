@@ -11,9 +11,9 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1626;--surface:#17203A;--ink:#E8ECF6;--mut:#9AA6C4;--line:#2A3558;--ok:#4FB8A8;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0F1626;--surface:#17203A;--ink:#E8ECF6;--mut:#9AA6C4;--line:#2A3558;--ok:#4FB8A8;color-scheme:dark}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 "Public Sans",system-ui,sans-serif}
+body{margin:0;background:radial-gradient(circle at 8% 0%,rgba(242,169,0,.12),transparent 25rem),var(--bg);color:var(--ink);font:400 15px/1.55 "Public Sans",system-ui,sans-serif}
 h1,h2,h3{font-family:"Bricolage Grotesque","Public Sans",sans-serif;margin:0;line-height:1.15}
-header{background:var(--ink);color:var(--bg);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header{background:linear-gradient(115deg,#14213D,#25385F);color:var(--bg);padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(20,33,61,.16)}
 header h1{font-size:22px;color:#fff}
 header h1 span{background:var(--acc);color:var(--accink);padding:0 7px;border-radius:4px;margin-right:6px}
 .seg{display:flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px}
@@ -22,14 +22,15 @@ header h1 span{background:var(--acc);color:var(--accink);padding:0 7px;border-ra
 :focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 main{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
 .note-bar{font-size:13px;color:var(--mut);margin:0 0 16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 8px 24px rgba(20,33,61,.05)}
 .grid{display:grid;gap:16px;grid-template-columns:300px 1fr}
 @media(max-width:800px){.grid{grid-template-columns:1fr}}
 label{display:block;font-weight:600;font-size:13px;margin-bottom:4px}
 input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
 textarea{min-height:90px;resize:vertical}
 .f2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:14px}
-.btn{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:600 14px "Public Sans";cursor:pointer}
+.btn{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:600 14px "Public Sans";cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 5px 12px rgba(20,33,61,.16)}
 .btn.acc{background:var(--acc);color:var(--accink)}.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
 .mrow{display:grid;grid-template-columns:1fr 90px 90px 36px;gap:8px;margin-bottom:8px}
 .mrow .x{background:none;border:0;color:var(--mut);cursor:pointer;font-size:18px}
@@ -49,6 +50,18 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;
 tr[data-id]{cursor:pointer}tr[data-id]:hover{background:var(--bg)}
 .scroll{overflow-x:auto}.toast{color:var(--ok);font-weight:600;margin-left:10px}
 .hobby{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 10px;margin:0 6px 6px 0;font-size:13px}
+.eyebrow{color:var(--mut);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px}
+.student-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.student-nav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 14px;font:600 14px "Public Sans";cursor:pointer}
+.student-nav button[aria-current=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.student-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.student-hero h2{font-size:30px}
+.hero-badge{background:var(--acc);color:var(--accink);border-radius:999px;padding:7px 12px;font-weight:700;white-space:nowrap}
+.section-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.section-heading h3{font-size:21px}
+.detail-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.form-actions{display:flex;align-items:center;gap:10px;margin-top:18px}
+.empty-state{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--mut)}
 </style>
 
 <style>
@@ -66,7 +79,7 @@ tr[data-id]{cursor:pointer}tr[data-id]:hover{background:var(--bg)}
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let token=null,me=null,sel=null,list=[],mentors=[],tab='mentees';
+let token=null,me=null,sel=null,list=[],mentors=[],tab='mentees',studentTab='overview';
 try{token=localStorage.getItem('md-token')}catch(e){}
 
 async function api(p,method='GET',body){
@@ -99,30 +112,45 @@ async function start(){
   if(!token)return authView('login');
   try{me=(await api('/me')).user}catch(e){return}
   $('#who').innerHTML=`<span>${esc(me.name)} · ${me.role==='hod'?'HOD':me.role}</span><button class="btn" id="out">Sign out</button>`;
-  $('#out').onclick=logout;sel=null;tab='mentees';
+  $('#out').onclick=logout;sel=null;tab='mentees';studentTab='overview';
   try{me.role==='mentee'?await menteeView():await staffView()}catch(e){$('#app').innerHTML=`<p class="err">${esc(e.message)}</p>`}}
 
 /* ---------- Mentee ---------- */
 const markRow=r=>`<div class="mrow"><input aria-label="Subject" placeholder="Subject" value="${esc(r.subject)}"><input aria-label="Marks obtained" type="number" min="0" placeholder="Marks" value="${esc(r.got)}"><input aria-label="Out of" type="number" min="1" placeholder="Out of" value="${esc(r.max)}"><button class="x" type="button" aria-label="Remove subject">×</button></div>`;
 async function menteeView(){
-  const p=me.profile||{},rows=p.marks?.length?p.marks:[{max:100}],notes=await api('/me/notes');
+  const notes=await api('/me/notes');renderStudentView(notes)}
+function studentNav(){
+  return `<nav class="student-nav" aria-label="Student profile navigation">
+    <button type="button" data-student-tab="overview" aria-current="${studentTab==='overview'}">Overview</button>
+    <button type="button" data-student-tab="personal" aria-current="${studentTab==='personal'}">Personal details</button>
+    <button type="button" data-student-tab="academic" aria-current="${studentTab==='academic'}">Academic details</button>
+  </nav>`;
+}
+function renderStudentView(notes){
+  const p=me.profile||{},rows=p.marks?.length?p.marks:[{max:100}];
   const f=(id,l,v)=>`<div><label for="${id}">${l}</label><input id="${id}" value="${esc(v)}"></div>`;
-  $('#app').innerHTML=`<div class="stack"><div class="card"><h2>Your profile</h2>
-  <p class="mut">${me.mentor?.name?`Your mentor is ${esc(me.mentor.name)}. `:'A mentor has not been assigned to you yet. '}Your mentor and head of department can see everything on this page.</p>
-  <div class="f2">${f('name','Full name',me.name)}${f('roll','Roll number',p.roll)}${f('dept','Department',p.dept)}${f('year','Year / semester',p.year)}${f('contact','Email or phone',p.contact)}</div>
-  <div class="f2">${f('hobbies','Hobbies (comma separated)',p.hobbies)}${f('goals','Career goals',p.goals)}</div>
-  <div style="margin-bottom:14px"><label for="about">Anything you want your mentor to know</label><textarea id="about">${esc(p.about)}</textarea></div>
-  <h3 style="margin:18px 0 10px">Marks</h3><div id="marks">${rows.map(markRow).join('')}</div>
-  <button class="btn ghost" id="addm" type="button">Add subject</button>
-  <div style="margin-top:20px"><button class="btn acc" id="save">Save profile</button><span class="toast" id="ok" role="status"></span></div></div>
-  <div class="card"><h2>From your mentor</h2>${notes.length?notes.map(entry).join(''):'<p class="mut">No notes yet. Your mentor’s notes and recommendations will appear here.</p>'}</div></div>`;
-  $('#addm').onclick=()=>$('#marks').insertAdjacentHTML('beforeend',markRow({max:100}));
-  $('#marks').onclick=e=>{if(e.target.classList.contains('x'))e.target.parentElement.remove()};
-  $('#save').onclick=async()=>{
-    const marks=[...document.querySelectorAll('.mrow')].map(r=>{const i=r.querySelectorAll('input');return{subject:i[0].value,got:i[1].value,max:i[2].value}});
-    const v=id=>$('#'+id).value;
-    try{const d=await api('/me/profile','PUT',{name:v('name'),roll:v('roll'),dept:v('dept'),year:v('year'),contact:v('contact'),hobbies:v('hobbies'),goals:v('goals'),about:v('about'),marks});
-      me.name=d.user.name;$('#ok').textContent='Profile saved.'}catch(e){$('#ok').textContent=e.message}}}
+  const mentorText=me.mentor?.name?`Your mentor is ${esc(me.mentor.name)}.`:'A mentor has not been assigned to you yet.';
+  let content=`<div class="student-hero"><div><p class="eyebrow">Student workspace</p><h2>Welcome, ${esc(me.name)}</h2><p class="mut">${mentorText}</p></div><span class="hero-badge">Mentee</span></div>${studentNav()}`;
+  if(studentTab==='overview') content+=`<div class="grid"><div class="card"><p class="eyebrow">Your profile</p><h3>Keep your information up to date</h3><p class="mut">Use the navigation above to edit your personal details or academic details separately.</p><div class="form-actions"><button class="btn acc" type="button" data-student-tab="personal">Edit personal details</button><button class="btn ghost" type="button" data-student-tab="academic">Edit academic details</button></div></div><div class="card"><p class="eyebrow">Mentor updates</p><h3>${notes.length?'Latest notes and recommendations':'No updates yet'}</h3>${notes.length?notes.slice(0,2).map(entry).join(''):'<p class="empty-state">Your mentor’s notes and recommendations will appear here.</p>'}</div></div>`;
+  if(studentTab==='personal') content+=`<div class="card"><div class="section-heading"><div><p class="eyebrow">Personal information</p><h3>Tell us about yourself</h3><p class="mut">These details help your mentor understand and support you.</p></div></div><div class="detail-grid">${f('name','Full name',me.name)}${f('contact','Email or phone',p.contact)}${f('hobbies','Hobbies (comma separated)',p.hobbies)}${f('goals','Career goals',p.goals)}</div><div style="margin-top:14px"><label for="about">Anything you want your mentor to know</label><textarea id="about">${esc(p.about)}</textarea></div><div class="form-actions"><button class="btn acc" id="save-personal" type="button">Save personal details</button><span class="toast" id="personal-ok" role="status"></span></div></div>`;
+  if(studentTab==='academic') content+=`<div class="card"><div class="section-heading"><div><p class="eyebrow">Academic information</p><h3>Track your academic progress</h3><p class="mut">Add subjects and marks separately from your personal profile.</p></div></div><div class="detail-grid">${f('roll','Roll number',p.roll)}${f('dept','Department',p.dept)}${f('year','Year / semester',p.year)}</div><h3 style="margin:24px 0 10px">Marks</h3><div id="marks">${rows.map(markRow).join('')}</div><button class="btn ghost" id="addm" type="button">Add subject</button><div class="form-actions"><button class="btn acc" id="save-academic" type="button">Save academic details</button><span class="toast" id="academic-ok" role="status"></span></div></div>`;
+  content+=`<div class="card" style="margin-top:16px"><div class="section-heading"><div><p class="eyebrow">Mentor updates</p><h3>Notes and recommendations</h3></div></div>${notes.length?notes.map(entry).join(''):'<p class="empty-state">No notes yet. Your mentor’s notes and recommendations will appear here.</p>'}</div>`;
+  $('#app').innerHTML=content;
+  document.querySelectorAll('[data-student-tab]').forEach(button=>button.onclick=()=>{studentTab=button.dataset.studentTab;renderStudentView(notes)});
+  if(studentTab==='personal') $('#save-personal').onclick=()=>saveStudentDetails(notes,'personal');
+  if(studentTab==='academic'){
+    $('#addm').onclick=()=>$('#marks').insertAdjacentHTML('beforeend',markRow({max:100}));
+    $('#marks').onclick=e=>{if(e.target.classList.contains('x'))e.target.parentElement.remove()};
+    $('#save-academic').onclick=()=>saveStudentDetails(notes,'academic');
+  }
+}
+async function saveStudentDetails(notes,section){
+  const p=me.profile||{},value=id=>$('#'+id)?.value||'';
+  const marks=section==='academic'?[...document.querySelectorAll('.mrow')].map(row=>{const inputs=row.querySelectorAll('input');return{subject:inputs[0].value,got:inputs[1].value,max:inputs[2].value}}):(p.marks||[]);
+  const body={name:section==='personal'?value('name'):me.name,contact:section==='personal'?value('contact'):p.contact,hobbies:section==='personal'?value('hobbies'):p.hobbies,goals:section==='personal'?value('goals'):p.goals,about:section==='personal'?value('about'):p.about,roll:section==='academic'?value('roll'):p.roll,dept:section==='academic'?value('dept'):p.dept,year:section==='academic'?value('year'):p.year,marks};
+  const status=$('#'+section+'-ok');
+  try{const d=await api('/me/profile','PUT',body);me.name=d.user.name;me.profile=d.user.profile;status.textContent=`${section==='personal'?'Personal':'Academic'} details saved.`}
+  catch(e){status.textContent=e.message}}
 
 /* ---------- Mentor and HOD ---------- */
 async function staffView(){

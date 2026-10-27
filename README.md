@@ -9,6 +9,8 @@ Accounts
 - HOD: created from `.env` on first start. Sign in, open "Mentors and assignment", add mentors and assign mentees.
 - Mentor: created by the HOD. One mentor can have many mentees.
 - Mentee: signs up on the sign-in page.
+- Mentees can use the profile navigation to update personal details and academic details independently.
+- The student workspace includes an overview, personal details, and academic details section, with mentor notes visible from each section.
 
 Before going live: serve over HTTPS, use a strong JWT_SECRET, and add rate limiting on /api/auth.
 
