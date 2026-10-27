@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mentor Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#EDF0F5;--surface:#fff;--ink:#14213D;--mut:#55617F;--line:#D5DAE5;--acc:#F2A900;--accink:#3F2E00;--ok:#1F7A6D;--r:10px;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1626;--surface:#17203A;--ink:#E8ECF6;--mut:#9AA6C4;--line:#2A3558;--ok:#4FB8A8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1626;--surface:#17203A;--ink:#E8ECF6;--mut:#9AA6C4;--line:#2A3558;--ok:#4FB8A8;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 "Public Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Public Sans",sans-serif;margin:0;line-height:1.15}
+header{background:var(--ink);color:var(--bg);padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{font-size:22px;color:#fff}
+header h1 span{background:var(--acc);color:var(--accink);padding:0 7px;border-radius:4px;margin-right:6px}
+.seg{display:flex;background:rgba(255,255,255,.12);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;color:#fff;font:500 14px "Public Sans";padding:7px 16px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--acc);color:var(--accink)}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+.note-bar{font-size:13px;color:var(--mut);margin:0 0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.grid{display:grid;gap:16px;grid-template-columns:300px 1fr}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:13px;margin-bottom:4px}
+input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+textarea{min-height:90px;resize:vertical}
+.f2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:14px}
+.btn{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:10px 18px;font:600 14px "Public Sans";cursor:pointer}
+.btn.acc{background:var(--acc);color:var(--accink)}.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.mrow{display:grid;grid-template-columns:1fr 90px 90px 36px;gap:8px;margin-bottom:8px}
+.mrow .x{background:none;border:0;color:var(--mut);cursor:pointer;font-size:18px}
+.sub{display:grid;grid-template-columns:130px 1fr 56px;gap:10px;align-items:center;margin:7px 0;font-size:14px}
+.track{height:10px;background:var(--bg);border-radius:6px;overflow:hidden}.track i{display:block;height:100%;background:var(--ok)}
+.list button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:11px 6px;cursor:pointer;color:var(--ink);font:inherit}
+.list button[aria-current=true]{background:var(--bg);box-shadow:inset 3px 0 var(--acc)}
+.list small,.mut{color:var(--mut)}
+.pct{font:700 28px "Bricolage Grotesque";}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.stats .card{padding:14px}.stats b{font:700 26px "Bricolage Grotesque";display:block}
+.entry{border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:14px 0}
+.entry.rec{border-color:var(--acc)}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:4px;background:var(--bg);margin-right:6px}
+.entry.rec .tag{background:var(--acc);color:var(--accink)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);font-size:14px}
+tr[data-id]{cursor:pointer}tr[data-id]:hover{background:var(--bg)}
+.scroll{overflow-x:auto}.toast{color:var(--ok);font-weight:600;margin-left:10px}
+.hobby{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 10px;margin:0 6px 6px 0;font-size:13px}
+</style>
+
+<style>
+.auth{max-width:380px;margin:48px auto}.auth label{margin-top:12px}.err{color:#C0392B;font-weight:600;min-height:1.4em;margin:10px 0 0}
+#who{display:flex;gap:12px;align-items:center;color:#fff;font-size:14px}#who .btn{padding:6px 14px;background:rgba(255,255,255,.16)}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}.tabs button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 16px;font:500 14px "Public Sans";cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.link{background:none;border:0;color:var(--ink);text-decoration:underline;cursor:pointer;font:inherit;padding:0;margin-top:14px}
+.stack>.card+.card{margin-top:16px}
+</style>
+</head>
+<body>
+<header><h1><span>Mentor</span>Desk</h1><div id="who"></div></header>
+<main><div id="app"></div></main>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let token=null,me=null,sel=null,list=[],mentors=[],tab='mentees';
+try{token=localStorage.getItem('md-token')}catch(e){}
+
+async function api(p,method='GET',body){
+  const r=await fetch('/api'+p,{method,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined});
+  const d=await r.json().catch(()=>({}));
+  if(r.status===401&&token){logout();throw new Error('Session expired. Sign in again.')}
+  if(!r.ok)throw new Error(d.error||'Something went wrong.');
+  return d}
+function logout(){token=null;me=null;try{localStorage.removeItem('md-token')}catch(e){}authView('login')}
+const total=m=>{const a=m.profile?.marks||[];const o=a.reduce((s,x)=>s+x.got,0),t=a.reduce((s,x)=>s+x.max,0);return t?Math.round(o/t*100):null};
+const fmt=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+const entry=n=>`<div class="entry ${n.kind==='Recommendation'?'rec':''}"><span class="tag">${esc(n.kind)}</span><span class="mut">${fmt(n.createdAt)}</span><div>${esc(n.text).replace(/\n/g,'<br>')}</div></div>`;
+
+/* ---------- Sign in ---------- */
+function authView(mode){
+  const reg=mode==='register';$('#who').innerHTML='';
+  $('#app').innerHTML=`<form class="card auth" id="af"><h2>${reg?'Create mentee account':'Sign in'}</h2>
+  ${reg?'<label for="n">Full name</label><input id="n" autocomplete="name" required>':''}
+  <label for="e">Email</label><input id="e" type="email" autocomplete="email" required>
+  <label for="p">Password</label><input id="p" type="password" minlength="8" autocomplete="${reg?'new-password':'current-password'}" required>
+  <p class="err" id="err" role="alert"></p><button class="btn acc" style="width:100%;margin-top:8px">${reg?'Create account':'Sign in'}</button>
+  <button class="link" type="button" id="sw">${reg?'Already have an account? Sign in':'New mentee? Create an account'}</button>
+  ${reg?'':'<p class="mut" style="font-size:13px">Mentor and HOD accounts are created by your HOD.</p>'}</form>`;
+  $('#sw').onclick=()=>authView(reg?'login':'register');
+  $('#af').onsubmit=async ev=>{ev.preventDefault();
+    try{const d=await api('/auth/'+mode,'POST',{name:reg?$('#n').value:undefined,email:$('#e').value,password:$('#p').value});
+      token=d.token;try{localStorage.setItem('md-token',token)}catch(e){}start()}catch(e){$('#err').textContent=e.message}}}
+
+async function start(){
+  if(!token)return authView('login');
+  try{me=(await api('/me')).user}catch(e){return}
+  $('#who').innerHTML=`<span>${esc(me.name)} · ${me.role==='hod'?'HOD':me.role}</span><button class="btn" id="out">Sign out</button>`;
+  $('#out').onclick=logout;sel=null;tab='mentees';
+  try{me.role==='mentee'?await menteeView():await staffView()}catch(e){$('#app').innerHTML=`<p class="err">${esc(e.message)}</p>`}}
+
+/* ---------- Mentee ---------- */
+const markRow=r=>`<div class="mrow"><input aria-label="Subject" placeholder="Subject" value="${esc(r.subject)}"><input aria-label="Marks obtained" type="number" min="0" placeholder="Marks" value="${esc(r.got)}"><input aria-label="Out of" type="number" min="1" placeholder="Out of" value="${esc(r.max)}"><button class="x" type="button" aria-label="Remove subject">×</button></div>`;
+async function menteeView(){
+  const p=me.profile||{},rows=p.marks?.length?p.marks:[{max:100}],notes=await api('/me/notes');
+  const f=(id,l,v)=>`<div><label for="${id}">${l}</label><input id="${id}" value="${esc(v)}"></div>`;
+  $('#app').innerHTML=`<div class="stack"><div class="card"><h2>Your profile</h2>
+  <p class="mut">${me.mentor?.name?`Your mentor is ${esc(me.mentor.name)}. `:'A mentor has not been assigned to you yet. '}Your mentor and head of department can see everything on this page.</p>
+  <div class="f2">${f('name','Full name',me.name)}${f('roll','Roll number',p.roll)}${f('dept','Department',p.dept)}${f('year','Year / semester',p.year)}${f('contact','Email or phone',p.contact)}</div>
+  <div class="f2">${f('hobbies','Hobbies (comma separated)',p.hobbies)}${f('goals','Career goals',p.goals)}</div>
+  <div style="margin-bottom:14px"><label for="about">Anything you want your mentor to know</label><textarea id="about">${esc(p.about)}</textarea></div>
+  <h3 style="margin:18px 0 10px">Marks</h3><div id="marks">${rows.map(markRow).join('')}</div>
+  <button class="btn ghost" id="addm" type="button">Add subject</button>
+  <div style="margin-top:20px"><button class="btn acc" id="save">Save profile</button><span class="toast" id="ok" role="status"></span></div></div>
+  <div class="card"><h2>From your mentor</h2>${notes.length?notes.map(entry).join(''):'<p class="mut">No notes yet. Your mentor’s notes and recommendations will appear here.</p>'}</div></div>`;
+  $('#addm').onclick=()=>$('#marks').insertAdjacentHTML('beforeend',markRow({max:100}));
+  $('#marks').onclick=e=>{if(e.target.classList.contains('x'))e.target.parentElement.remove()};
+  $('#save').onclick=async()=>{
+    const marks=[...document.querySelectorAll('.mrow')].map(r=>{const i=r.querySelectorAll('input');return{subject:i[0].value,got:i[1].value,max:i[2].value}});
+    const v=id=>$('#'+id).value;
+    try{const d=await api('/me/profile','PUT',{name:v('name'),roll:v('roll'),dept:v('dept'),year:v('year'),contact:v('contact'),hobbies:v('hobbies'),goals:v('goals'),about:v('about'),marks});
+      me.name=d.user.name;$('#ok').textContent='Profile saved.'}catch(e){$('#ok').textContent=e.message}}}
+
+/* ---------- Mentor and HOD ---------- */
+async function staffView(){
+  list=await api('/mentees');mentors=me.role==='hod'?await api('/mentors'):[];draw()}
+function draw(){
+  const hod=me.role==='hod';
+  const av=list.map(total).filter(x=>x!==null);
+  $('#app').innerHTML=(hod?`<div class="tabs"><button data-t="mentees" aria-pressed="${tab==='mentees'}">All mentees</button><button data-t="manage" aria-pressed="${tab==='manage'}">Mentors and assignment</button></div>
+  <div class="stats"><div class="card"><b>${list.length}</b>Mentees</div><div class="card"><b>${mentors.length}</b>Mentors</div><div class="card"><b>${av.length?Math.round(av.reduce((a,b)=>a+b,0)/av.length)+'%':'–'}</b>Average marks</div><div class="card"><b>${list.filter(m=>!m.mentor).length}</b>Without a mentor</div></div>`:'')+'<div id="panel"></div>';
+  document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;draw()});
+  tab==='manage'&&hod?managePanel():menteePanel()}
+function menteePanel(){
+  $('#panel').innerHTML=`<div class="grid"><div class="card list"><label for="q" class="mut">Search mentees</label><input id="q" style="margin-bottom:8px"><div id="lb"></div></div><div id="detail"></div></div>`;
+  const paint=()=>{const q=$('#q').value.toLowerCase(),l=list.filter(m=>m.name.toLowerCase().includes(q));
+    $('#lb').innerHTML=l.length?l.map(m=>`<button data-id="${m.id}" aria-current="${m.id===sel}"><b>${esc(m.name)}</b><br><small>${esc(m.profile?.dept)} ${esc(m.profile?.year)} · ${total(m)??'–'}%</small></button>`).join(''):`<p class="mut">${list.length?'No match.':me.role==='mentor'?'No mentees are assigned to you yet. Your HOD assigns mentees.':'No mentees yet. They appear after they sign up.'}</p>`;
+    $('#lb').querySelectorAll('button').forEach(b=>b.onclick=()=>{sel=b.dataset.id;paint();pick()})};
+  $('#q').oninput=paint;paint();sel?pick():$('#detail').innerHTML='<div class="card"><h2>Select a mentee</h2><p class="mut">Open a profile to see marks, hobbies and notes.</p></div>'}
+async function pick(){
+  try{const{mentee:m,notes}=await api('/mentees/'+sel),p=m.profile||{},mentor=me.role==='mentor';
+  $('#detail').innerHTML=`<div class="stack"><div class="card"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h2>${esc(m.name)}</h2><span class="mut">${esc(p.roll)} · ${esc(p.dept)} ${esc(p.year)} · ${esc(p.contact||m.email)}</span></div><div class="pct">${total(m)??'–'}%</div></div>
+  <h3 style="margin:18px 0 6px">Marks</h3>${(p.marks||[]).map(s=>`<div class="sub"><span>${esc(s.subject)}</span><div class="track"><i style="width:${Math.min(100,s.got/s.max*100)}%"></i></div><span>${s.got}/${s.max}</span></div>`).join('')||'<p class="mut">No marks entered.</p>'}
+  <h3 style="margin:18px 0 6px">Hobbies and goals</h3>${(p.hobbies||'').split(',').filter(h=>h.trim()).map(h=>`<span class="hobby">${esc(h.trim())}</span>`).join('')}<p>${esc(p.goals)}</p>
+  ${p.about?`<h3 style="margin:14px 0 4px">In their words</h3><p>${esc(p.about)}</p>`:''}</div>
+  <div class="card"><h2>Notes and recommendations</h2>${mentor?`<div style="margin:14px 0"><div class="f2" style="margin-bottom:10px"><div><label for="kind">Type</label><select id="kind"><option>Note</option><option>Recommendation</option></select></div></div>
+  <label for="ntext">Write for ${esc(m.name)}</label><textarea id="ntext"></textarea><div style="margin-top:10px"><button class="btn acc" id="post">Add to profile</button><span class="toast" id="pok" role="status"></span></div></div>`:'<p class="mut">Only mentors can add notes.</p>'}
+  ${notes.length?notes.map(entry).join(''):'<p class="mut">Nothing written yet.</p>'}</div></div>`;
+  if(mentor)$('#post').onclick=async()=>{try{await api('/mentees/'+sel+'/notes','POST',{kind:$('#kind').value,text:$('#ntext').value});pick()}catch(e){$('#pok').textContent=e.message}}
+  }catch(e){$('#detail').innerHTML=`<p class="err">${esc(e.message)}</p>`}}
+function managePanel(){
+  const cnt=id=>list.filter(m=>m.mentor===id).length;
+  $('#panel').innerHTML=`<div class="stack"><div class="card"><h2>Add a mentor</h2><form id="mf"><div class="f2" style="margin-top:12px"><div><label for="mn">Name</label><input id="mn" required></div><div><label for="me">Email</label><input id="me" type="email" required></div><div><label for="mp">Temporary password</label><input id="mp" minlength="8" required></div></div>
+  <button class="btn acc">Add mentor</button><span class="toast" id="mok" role="status"></span></form></div>
+  <div class="card"><h2>Assign mentees</h2><p class="mut">Each mentor can have as many mentees as you assign.</p><div class="scroll"><table><tr><th>Mentee</th><th>Department</th><th>Mentor</th></tr>
+  ${list.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.profile?.dept)}</td><td><select data-id="${m.id}" aria-label="Mentor for ${esc(m.name)}"><option value="">Unassigned</option>${mentors.map(x=>`<option value="${x.id}" ${x.id===m.mentor?'selected':''}>${esc(x.name)} (${cnt(x.id)})</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="3" class="mut">No mentees have signed up yet.</td></tr>'}</table></div></div></div>`;
+  $('#mf').onsubmit=async ev=>{ev.preventDefault();try{const d=await api('/mentors','POST',{name:$('#mn').value,email:$('#me').value,password:$('#mp').value});mentors.push(d);managePanelKeep()}catch(e){$('#mok').textContent=e.message}};
+  document.querySelectorAll('select[data-id]').forEach(s=>s.onchange=async()=>{try{await api('/mentees/'+s.dataset.id+'/mentor','PUT',{mentor:s.value||null});list.find(m=>m.id===s.dataset.id).mentor=s.value||null;draw()}catch(e){alert(e.message)}})}
+function managePanelKeep(){draw();$('#mok').textContent='Mentor added.'}
+start();
+</script>
+</body>
+</html>
